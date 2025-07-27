@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://121.125.73.87/foresys/EVA" />
+                  <option value="svn://121.125.73.87/foresys/apro" />
+                  <option value="svn://121.125.73.87/foresys/branches" />
+                  <option value="svn://121.125.73.87/foresys/cashingpro" />
+                  <option value="svn://121.125.73.87/foresys/choeun" />
+                  <option value="svn://121.125.73.87/foresys/edbank_mobile" />
+                  <option value="svn://121.125.73.87/foresys/fcss" />
+                  <option value="svn://121.125.73.87/foresys/foresys-admin" />
+                  <option value="svn://121.125.73.87/foresys/foresys_bizchnl" />
+                  <option value="svn://121.125.73.87/foresys/ha_dashboard" />
+                  <option value="svn://121.125.73.87/foresys/hk_homepage" />
+                  <option value="svn://121.125.73.87/foresys/hug" />
+                  <option value="svn://121.125.73.87/foresys/lge_it_dashboard" />
+                  <option value="svn://121.125.73.87/foresys/lge_it_script" />
+                  <option value="svn://121.125.73.87/foresys/looker_batch" />
+                  <option value="svn://121.125.73.87/foresys/looker_web" />
+                  <option value="svn://121.125.73.87/foresys/module" />
+                  <option value="svn://121.125.73.87/foresys/ms_dashboard" />
+                  <option value="svn://121.125.73.87/foresys/paros" />
+                  <option value="svn://121.125.73.87/foresys/samsung" />
+                  <option value="svn://121.125.73.87/foresys/springBatch" />
+                  <option value="svn://121.125.73.87/foresys/starbank_old" />
+                  <option value="svn://121.125.73.87/foresys/tags" />
+                  <option value="svn://121.125.73.87/foresys/testbranch" />
+                  <option value="svn://121.125.73.87/foresys/tlb" />
+                  <option value="svn://121.125.73.87/foresys/vietnam-p2p" />
+                  <option value="svn://121.125.73.87/foresys/vietnam-p2p-api" />
+                  <option value="svn://121.125.73.87/foresys/vietnam-p2p-ldp" />
+                  <option value="svn://121.125.73.87/foresys/vietnam_p2p_mobile" />
+                  <option value="svn://121.125.73.87/foresys/woori_admin_dev" />
+                  <option value="svn://121.125.73.87/foresys/woori_css_api" />
+                  <option value="svn://121.125.73.87/foresys/yuanta" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://121.125.73.87/foresys/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

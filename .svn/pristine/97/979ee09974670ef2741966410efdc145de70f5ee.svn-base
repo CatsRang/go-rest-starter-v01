@@ -1,0 +1,104 @@
+package util
+
+import (
+	"context"
+	"log/slog"
+	"sync"
+)
+
+type WorkerPool struct {
+	workers  int
+	jobQueue chan Job
+	workerWg sync.WaitGroup
+	ctx      context.Context
+	cancel   context.CancelFunc
+	logger   *slog.Logger
+}
+
+type Job struct {
+	ID       string
+	Task     func() error
+	Result   chan error
+	Priority int
+}
+
+func NewWorkerPool(workers int) *WorkerPool {
+	ctx, cancel := context.WithCancel(context.Background())
+	logger := GetLogger().With("component", "worker_pool")
+
+	return &WorkerPool{
+		workers:  workers,
+		jobQueue: make(chan Job, workers*2), // Buffer for jobs
+		ctx:      ctx,
+		cancel:   cancel,
+		logger:   logger,
+	}
+}
+
+func (wp *WorkerPool) Start() {
+	wp.logger.Info("Starting worker pool", "workers", wp.workers)
+
+	for i := 0; i < wp.workers; i++ {
+		wp.workerWg.Add(1)
+		go wp.worker(i)
+	}
+}
+
+func (wp *WorkerPool) Stop() {
+	wp.logger.Info("Stopping worker pool")
+	wp.cancel()
+	close(wp.jobQueue)
+	wp.workerWg.Wait()
+	wp.logger.Info("Worker pool stopped")
+}
+
+func (wp *WorkerPool) Submit(job Job) bool {
+	select {
+	case wp.jobQueue <- job:
+		return true
+	case <-wp.ctx.Done():
+		return false
+	default:
+		wp.logger.Warn("Job queue full, dropping job", "job_id", job.ID)
+		return false
+	}
+}
+
+func (wp *WorkerPool) worker(id int) {
+	defer wp.workerWg.Done()
+
+	workerLogger := wp.logger.With("worker_id", id)
+	workerLogger.Debug("Worker started")
+
+	for {
+		select {
+		case job, ok := <-wp.jobQueue:
+			if !ok {
+				workerLogger.Debug("Worker stopping")
+				return
+			}
+
+			workerLogger.Debug("Processing job", "job_id", job.ID)
+			err := job.Task()
+
+			// Send result back if channel provided
+			if job.Result != nil {
+				select {
+				case job.Result <- err:
+				default:
+					workerLogger.Warn("Could not send job result", "job_id", job.ID)
+				}
+			}
+
+			if err != nil {
+				workerLogger.Error("Job failed", "job_id", job.ID, "error", err)
+			} else {
+				workerLogger.Debug("Job completed", "job_id", job.ID)
+			}
+
+		case <-wp.ctx.Done():
+			workerLogger.Debug("Worker stopped by context")
+			return
+		}
+	}
+}
