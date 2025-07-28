@@ -13,7 +13,7 @@ A simplified example project demonstrating core Go REST API functionality, extra
 ## Project Structure
 
 ```
-_example/
+go-rest-starter-v01/
 ├── cmd/
 │   └── main.go                 # Application entry point with Cobra CLI
 ├── pkg/
@@ -21,6 +21,8 @@ _example/
 │   │   └── config.go          # Configuration management with Viper
 │   ├── util/
 │   │   └── logger.go          # Logging utility with slog
+│   ├── server/
+│   │   └── server.go          # Server setup and middleware
 │   └── api/
 │       ├── handler/
 │       │   └── user_handler.go # HTTP request handlers
@@ -28,9 +30,10 @@ _example/
 │       │   └── user_service.go # Business logic layer
 │       └── vo/
 │           └── user.go        # Value objects (DTOs)
-├── configs/
-│   └── config.yaml            # Configuration file
+├── config.yaml                # Configuration file
 ├── go.mod                     # Go module definition
+├── go.sum                     # Go dependencies
+├── CLAUDE.md                  # Claude Code instructions
 └── README.md                  # This file
 ```
 
@@ -38,7 +41,6 @@ _example/
 
 1. **Install Dependencies**
    ```bash
-   cd _example
    go mod tidy
    ```
 
@@ -46,7 +48,7 @@ _example/
    ```bash
    go run cmd/main.go
    # or with custom config
-   go run cmd/main.go --config configs/config.yaml
+   go run cmd/main.go --config config.yaml
    ```
 
 3. **Build the Application**
@@ -57,6 +59,9 @@ _example/
 
 ## API Endpoints
 
+### Health Check
+- `GET /health` - Application health status
+
 ### Users API (`/api/v1/users`)
 
 - `GET /api/v1/users` - Get all users
@@ -66,6 +71,11 @@ _example/
 - `DELETE /api/v1/users/:id` - Delete user
 
 ### Example Usage
+
+**Health Check:**
+```bash
+curl http://localhost:8080/health
+```
 
 **Get All Users:**
 ```bash
@@ -98,7 +108,7 @@ curl -X DELETE http://localhost:8080/api/v1/users/1
 
 ## Configuration
 
-Edit `configs/config.yaml`:
+Edit `config.yaml`:
 
 ```yaml
 server:
@@ -110,6 +120,12 @@ log:
 ```
 
 ## Architecture Overview
+
+### Server Layer (`pkg/server/`)
+- HTTP server setup and configuration
+- Middleware registration (CORS, logging, recovery)
+- Route registration and health checks
+- Graceful shutdown handling
 
 ### Handler Layer (`pkg/api/handler/`)
 - Handles HTTP requests and responses

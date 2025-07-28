@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 go run cmd/main.go
 
 # Run with custom config file
-go run cmd/main.go --config configs/config.yaml
+go run cmd/main.go --config config.yaml
 ```
 
 ### Building
@@ -36,6 +36,7 @@ This is a Go REST API project following clean architecture principles with a lay
 - `cmd/main.go` - Application entry point with Cobra CLI framework
 - `pkg/config/` - Configuration management using Viper with YAML support
 - `pkg/util/` - Shared utilities (structured logging with slog)
+- `pkg/server/` - HTTP server setup, middleware, and route registration
 - `pkg/api/handler/` - HTTP request handlers (Echo v4 framework)
 - `pkg/api/service/` - Business logic layer with in-memory storage
 - `pkg/api/vo/` - Value objects (DTOs) for request/response structures
@@ -54,7 +55,7 @@ Request → Handler → Service → Response
 - In-memory storage with mutex-based concurrency control
 
 ### Configuration
-- Default config: `configs/config.yaml`
+- Default config: `config.yaml`
 - Supports environment variable overrides via Viper
 - Configuration structure defined in `pkg/config/config.go`
 
@@ -64,7 +65,11 @@ Request → Handler → Service → Response
 - Log levels: debug, info, warn, error
 
 ### API Endpoints
-Base path: `/api/v1/users`
+
+**Health Check:**
+- GET `/health` - Application health status
+
+**Users API** (Base path: `/api/v1/users`):
 - GET `/` - List all users
 - GET `/:id` - Get user by ID
 - POST `/` - Create new user
