@@ -12,7 +12,7 @@ type Config struct {
 	Server struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
-	} `yaml:"server"`
+	} `yaml:"root"`
 
 	Log struct {
 		Level string `yaml:"level"`
@@ -55,13 +55,13 @@ func (c *Config) Load(configPath string) error {
 		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 
 		// Bind specific environment variables
-		_ = viper.BindEnv("server.host", "GO_EX01_SERVER_HOST")
-		_ = viper.BindEnv("server.port", "GO_EX01_SERVER_PORT")
+		_ = viper.BindEnv("root.host", "GO_EX01_SERVER_HOST")
+		_ = viper.BindEnv("root.port", "GO_EX01_SERVER_PORT")
 		_ = viper.BindEnv("log.level", "GO_EX01_LOG_LEVEL")
 
 		// Set default values
-		viper.SetDefault("server.host", "localhost")
-		viper.SetDefault("server.port", 8080)
+		viper.SetDefault("root.host", "localhost")
+		viper.SetDefault("root.port", 8080)
 		viper.SetDefault("log.level", "info")
 
 		if err := viper.ReadInConfig(); err != nil {
