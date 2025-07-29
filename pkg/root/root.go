@@ -23,7 +23,7 @@ func NewRootCommand() *cobra.Command {
 		Use:   "go_ex01-api",
 		Short: "Example REST API root",
 		Long:  "A simple go_ex01 demonstrating Go REST API with Echo, Viper, Cobra, and slog",
-		Run:   runServer,
+		Run:   rootRun,
 	}
 
 	rootCmd.Flags().StringVarP(&configPath, "config", "c", "./config.yaml", "Path to config file")
@@ -44,7 +44,7 @@ func initConfig() {
 	slog.Info("Config", "conf", cfg)
 }
 
-func runServer(cmd *cobra.Command, args []string) {
+func rootRun(cmd *cobra.Command, args []string) {
 	cfg := config.Get()
 
 	srv := New(cfg)
