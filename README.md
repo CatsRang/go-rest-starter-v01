@@ -13,26 +13,28 @@ A simplified example project demonstrating core Go REST API functionality, extra
 ## Project Structure
 
 ```
-go-rest-starter-v01/
+go-rest_example-v01/
 ├── cmd/
-│   └── main.go                 # Application entry point with Cobra CLI
+│   └── main.go                 # Application entry point
 ├── pkg/
+│   ├── root/                   # Root command and server orchestration
+│   │   ├── root.go            # Cobra CLI setup and graceful shutdown
+│   │   └── server.go          # HTTP server setup and middleware
 │   ├── config/
 │   │   └── config.go          # Configuration management with Viper
 │   ├── util/
 │   │   └── logger.go          # Logging utility with slog
-│   ├── server/
-│   │   └── server.go          # Server setup and middleware
 │   └── api/
 │       ├── handler/
-│       │   └── user_handler.go # HTTP request handlers
+│       │   └── user_handler.go # HTTP request handlers (Echo v4)
 │       ├── service/
 │       │   └── user_service.go # Business logic layer
 │       └── vo/
 │           └── user.go        # Value objects (DTOs)
 ├── config.yaml                # Configuration file
-├── go.mod                     # Go module definition
+├── go.mod                     # Go module definition (module: go_ex01)
 ├── go.sum                     # Go dependencies
+├── context.md                 # Project context and overview
 ├── CLAUDE.md                  # Claude Code instructions
 └── README.md                  # This file
 ```
@@ -121,11 +123,11 @@ log:
 
 ## Architecture Overview
 
-### Server Layer (`pkg/server/`)
-- HTTP server setup and configuration
-- Middleware registration (CORS, logging, recovery)
-- Route registration and health checks
-- Graceful shutdown handling
+### Root Layer (`pkg/root/`)
+- Cobra CLI command setup and configuration loading
+- HTTP server orchestration and lifecycle management
+- Graceful shutdown handling with signal management
+- Integration point between CLI and web server components
 
 ### Handler Layer (`pkg/api/handler/`)
 - Handles HTTP requests and responses

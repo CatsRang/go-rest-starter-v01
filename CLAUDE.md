@@ -33,10 +33,12 @@ go test ./...
 This is a Go REST API project following clean architecture principles with a layered approach:
 
 ### Project Structure
-- `cmd/main.go` - Application entry point with Cobra CLI framework
+- `cmd/main.go` - Application entry point delegating to root command
+- `pkg/root/` - Root command setup and server orchestration
+  - `root.go` - Cobra CLI command setup, config initialization, and graceful shutdown
+  - `server.go` - HTTP server setup, middleware, and route registration
 - `pkg/config/` - Configuration management using Viper with YAML support
 - `pkg/util/` - Shared utilities (structured logging with slog)
-- `pkg/server/` - HTTP server setup, middleware, and route registration
 - `pkg/api/handler/` - HTTP request handlers (Echo v4 framework)
 - `pkg/api/service/` - Business logic layer with in-memory storage
 - `pkg/api/vo/` - Value objects (DTOs) for request/response structures
