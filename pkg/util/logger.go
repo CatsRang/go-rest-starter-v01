@@ -3,6 +3,7 @@ package util
 import (
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 )
@@ -12,22 +13,8 @@ var (
 	loggerOnce sync.Once
 )
 
-func InitLogger(level string) {
-	loggerOnce.Do(func() {
-		logLevel := parseLogLevel(level)
-		
-		opts := &slog.HandlerOptions{
-			Level: logLevel,
-		}
-		
-		handler := slog.NewJSONHandler(os.Stdout, opts)
-		logger = slog.New(handler)
-		slog.SetDefault(logger)
-	})
-}
-
-func parseLogLevel(level string) slog.Level {
-	switch strings.ToLower(level) {
+func parseLogLevel(levelStr string) slog.Level {
+	switch strings.ToLower(levelStr) {
 	case "debug":
 		return slog.LevelDebug
 	case "info":
@@ -41,6 +28,33 @@ func parseLogLevel(level string) slog.Level {
 	}
 }
 
+// InitLogger initializes and sets the global logger with the given log level string
+func InitLogger(levelStr string) {
+	loggerOnce.Do(func() {
+		level := parseLogLevel(levelStr)
+
+		opts := &slog.HandlerOptions{
+			Level:     level,
+			AddSource: true,
+			ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+				if a.Key == slog.SourceKey {
+					source := a.Value.Any().(*slog.Source)
+					return slog.Group("source",
+						slog.String("file", filepath.Base(source.File)),
+						slog.Int("line", source.Line),
+					)
+				}
+				return a
+			},
+		}
+
+		handler := slog.NewJSONHandler(os.Stdout, opts)
+		logger = slog.New(handler)
+		slog.SetDefault(logger)
+	})
+}
+
+// GetLogger returns the initialized logger instance
 func GetLogger() *slog.Logger {
 	if logger == nil {
 		InitLogger("info")

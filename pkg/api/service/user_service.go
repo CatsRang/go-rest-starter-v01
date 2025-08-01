@@ -7,21 +7,16 @@ import (
 	"time"
 
 	"go_ex01/pkg/api/vo"
-	"go_ex01/pkg/util"
 )
 
 type UserService struct {
-	logger *slog.Logger
 	users  map[int]*vo.User
 	nextID int
 	mu     sync.RWMutex
 }
 
 func NewUserService() *UserService {
-	logger := util.GetLogger().With("component", "user_service")
-
 	service := &UserService{
-		logger: logger,
 		users:  make(map[int]*vo.User),
 		nextID: 1,
 	}
@@ -56,7 +51,7 @@ func (s *UserService) GetAllUsers() []vo.UserResponse {
 		})
 	}
 
-	s.logger.Debug("Retrieved all users", "count", len(users))
+	slog.Debug("Retrieved all users", "count", len(users))
 	return users
 }
 
@@ -66,7 +61,7 @@ func (s *UserService) GetUserByID(id int) (*vo.UserResponse, error) {
 
 	user, exists := s.users[id]
 	if !exists {
-		s.logger.Warn("User not found", "id", id)
+		slog.Warn("User not found", "id", id)
 		return nil, errors.New("user not found")
 	}
 
@@ -77,7 +72,7 @@ func (s *UserService) GetUserByID(id int) (*vo.UserResponse, error) {
 		CreatedAt: user.CreatedAt,
 	}
 
-	s.logger.Debug("Retrieved user", "id", id, "name", user.Name)
+	slog.Debug("Retrieved user", "id", id, "name", user.Name)
 	return response, nil
 }
 
@@ -86,7 +81,7 @@ func (s *UserService) CreateUser(req vo.CreateUserRequest) (*vo.UserResponse, er
 	defer s.mu.Unlock()
 
 	if s.isEmailExists(req.Email) {
-		s.logger.Warn("Email already exists", "email", req.Email)
+		slog.Warn("Email already exists", "email", req.Email)
 		return nil, errors.New("email already exists")
 	}
 
@@ -107,7 +102,7 @@ func (s *UserService) CreateUser(req vo.CreateUserRequest) (*vo.UserResponse, er
 		CreatedAt: user.CreatedAt,
 	}
 
-	s.logger.Info("User created", "id", user.ID, "name", user.Name, "email", user.Email)
+	slog.Info("User created", "id", user.ID, "name", user.Name, "email", user.Email)
 	return response, nil
 }
 
@@ -117,7 +112,7 @@ func (s *UserService) UpdateUser(id int, req vo.UpdateUserRequest) (*vo.UserResp
 
 	user, exists := s.users[id]
 	if !exists {
-		s.logger.Warn("User not found for update", "id", id)
+		slog.Warn("User not found for update", "id", id)
 		return nil, errors.New("user not found")
 	}
 
@@ -126,7 +121,7 @@ func (s *UserService) UpdateUser(id int, req vo.UpdateUserRequest) (*vo.UserResp
 	}
 	if req.Email != "" {
 		if s.isEmailExistsExcept(req.Email, id) {
-			s.logger.Warn("Email already exists for another user", "email", req.Email, "id", id)
+			slog.Warn("Email already exists for another user", "email", req.Email, "id", id)
 			return nil, errors.New("email already exists")
 		}
 		user.Email = req.Email
@@ -139,7 +134,7 @@ func (s *UserService) UpdateUser(id int, req vo.UpdateUserRequest) (*vo.UserResp
 		CreatedAt: user.CreatedAt,
 	}
 
-	s.logger.Info("User updated", "id", id, "name", user.Name, "email", user.Email)
+	slog.Info("User updated", "id", id, "name", user.Name, "email", user.Email)
 	return response, nil
 }
 
@@ -149,12 +144,12 @@ func (s *UserService) DeleteUser(id int) error {
 
 	_, exists := s.users[id]
 	if !exists {
-		s.logger.Warn("User not found for deletion", "id", id)
+		slog.Warn("User not found for deletion", "id", id)
 		return errors.New("user not found")
 	}
 
 	delete(s.users, id)
-	s.logger.Info("User deleted", "id", id)
+	slog.Info("User deleted", "id", id)
 	return nil
 }
 

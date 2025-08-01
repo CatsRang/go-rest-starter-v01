@@ -9,18 +9,14 @@ import (
 
 	"go_ex01/pkg/api/service"
 	"go_ex01/pkg/api/vo"
-	"go_ex01/pkg/util"
 )
 
 type UserHandler struct {
-	logger      *slog.Logger
 	userService *service.UserService
 }
 
 func NewUserHandler(userService *service.UserService) *UserHandler {
-	logger := util.GetLogger().With("component", "user_handler")
 	return &UserHandler{
-		logger:      logger,
 		userService: userService,
 	}
 }
@@ -35,7 +31,7 @@ func (h *UserHandler) RegisterRoutes(g *echo.Group) {
 }
 
 func (h *UserHandler) GetUsers(c echo.Context) error {
-	h.logger.Debug("Getting all users")
+	slog.Debug("Getting all users")
 
 	users := h.userService.GetAllUsers()
 	response := vo.UsersResponse{
@@ -49,14 +45,14 @@ func (h *UserHandler) GetUsers(c echo.Context) error {
 func (h *UserHandler) GetUser(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		h.logger.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
+		slog.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
 		return c.JSON(http.StatusBadRequest, vo.ErrorResponse{
 			Error:   "invalid_id",
 			Message: "User ID must be a valid integer",
 		})
 	}
 
-	h.logger.Debug("Getting user", "id", id)
+	slog.Debug("Getting user", "id", id)
 
 	user, err := h.userService.GetUserByID(id)
 	if err != nil {
@@ -72,7 +68,7 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	var req vo.CreateUserRequest
 	if err := c.Bind(&req); err != nil {
-		h.logger.Warn("Invalid request body", "error", err)
+		slog.Warn("Invalid request body", "error", err)
 		return c.JSON(http.StatusBadRequest, vo.ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",
@@ -86,7 +82,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 		})
 	}
 
-	h.logger.Debug("Creating user", "name", req.Name, "email", req.Email)
+	slog.Debug("Creating user", "name", req.Name, "email", req.Email)
 
 	user, err := h.userService.CreateUser(req)
 	if err != nil {
@@ -102,7 +98,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		h.logger.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
+		slog.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
 		return c.JSON(http.StatusBadRequest, vo.ErrorResponse{
 			Error:   "invalid_id",
 			Message: "User ID must be a valid integer",
@@ -111,14 +107,14 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 
 	var req vo.UpdateUserRequest
 	if err := c.Bind(&req); err != nil {
-		h.logger.Warn("Invalid request body", "error", err)
+		slog.Warn("Invalid request body", "error", err)
 		return c.JSON(http.StatusBadRequest, vo.ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",
 		})
 	}
 
-	h.logger.Debug("Updating user", "id", id, "name", req.Name, "email", req.Email)
+	slog.Debug("Updating user", "id", id, "name", req.Name, "email", req.Email)
 
 	user, err := h.userService.UpdateUser(id, req)
 	if err != nil {
@@ -140,14 +136,14 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		h.logger.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
+		slog.Warn("Invalid user ID", "id", c.Param("id"), "error", err)
 		return c.JSON(http.StatusBadRequest, vo.ErrorResponse{
 			Error:   "invalid_id",
 			Message: "User ID must be a valid integer",
 		})
 	}
 
-	h.logger.Debug("Deleting user", "id", id)
+	slog.Debug("Deleting user", "id", id)
 
 	err = h.userService.DeleteUser(id)
 	if err != nil {

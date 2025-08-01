@@ -18,12 +18,9 @@ import (
 type Server struct {
 	echo   *echo.Echo
 	config *config.Config
-	logger *slog.Logger
 }
 
 func New(cfg *config.Config) *Server {
-	logger := slog.With("component", "root")
-
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
@@ -31,7 +28,6 @@ func New(cfg *config.Config) *Server {
 	return &Server{
 		echo:   e,
 		config: cfg,
-		logger: logger,
 	}
 }
 
@@ -44,7 +40,7 @@ func (s *Server) Setup() {
 	// Setup routes
 	s.setupRoutes()
 
-	s.logger.Info("Server setup completed")
+	slog.Info("Server setup completed")
 }
 
 func (s *Server) setupRoutes() {
@@ -59,7 +55,7 @@ func (s *Server) setupRoutes() {
 	userHandler := handler.NewUserHandler(userService)
 	userHandler.RegisterRoutes(api)
 
-	s.logger.Info("Routes registered")
+	slog.Info("Routes registered")
 }
 
 func (s *Server) healthCheck(c echo.Context) error {
@@ -73,10 +69,10 @@ func (s *Server) healthCheck(c echo.Context) error {
 
 func (s *Server) Start() error {
 	addr := fmt.Sprintf("%s:%d", s.config.Server.Host, s.config.Server.Port)
-	s.logger.Info("Starting root", "address", addr)
+	slog.Info("Starting root", "address", addr)
 
 	if err := s.echo.Start(addr); err != nil && err != http.ErrServerClosed {
-		s.logger.Error("Server failed to start", "error", err)
+		slog.Error("Server failed to start", "error", err)
 		return err
 	}
 
@@ -84,13 +80,13 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	s.logger.Info("Shutting down root...")
+	slog.Info("Shutting down root...")
 
 	if err := s.echo.Shutdown(ctx); err != nil {
-		s.logger.Error("Server forced to shutdown", "error", err)
+		slog.Error("Server forced to shutdown", "error", err)
 		return err
 	}
 
-	s.logger.Info("Server shutdown completed")
+	slog.Info("Server shutdown completed")
 	return nil
 }
